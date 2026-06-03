@@ -8,5 +8,4 @@ fn main() {
         ytdlp_bin_path:String::from("/bin/yt-dlp"),
         cache_dir:String::from(cache_dir)
     };
-    downloader.download("youtube url here ");
 }

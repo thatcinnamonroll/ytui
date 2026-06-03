@@ -8,7 +8,7 @@ pub struct ytdownload {
 impl ytdownload {
     pub fn download(&self,vid_url : &str){
         let response = Command::new(&self.ytdlp_bin_path)
-                        .args(["-x","--audio-format","opus","-P",&self.cache_dir.clone(),vid_url.clone()])
+                        .args(["-x","--audio-format","opus","-P",&self.cache_dir.clone(),"-o","%(id)s",vid_url.clone()])
                         .output()
                         .expect("failed to run yt-dlp");
     }
