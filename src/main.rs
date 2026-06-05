@@ -1,6 +1,7 @@
 use std::env;
 
 pub mod youtube;
+pub mod player;
 
 fn main() {
     let cache_dir = format!("{}/.cache/ytui",env::home_dir().unwrap().as_path().to_str().unwrap());
