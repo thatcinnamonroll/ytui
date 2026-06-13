@@ -6,5 +6,11 @@ pub mod playlists;
 pub mod tui;
 
 fn main() {
-    tui::start_tui();
+    let mut app = tui::app{
+        playlists: None,
+        tracklist: None,
+        focused: tui::focused_block::Music,
+        state: tui::menu_state::Playlist,
+    };
+    tui::start_tui(app);
 }

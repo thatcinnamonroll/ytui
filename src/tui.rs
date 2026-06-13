@@ -1,63 +1,78 @@
-use crossterm::event;
+use crossterm::event::{self, KeyCode};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Style, Stylize};
-use ratatui::text::{Line, Span};
+use ratatui::style::Style;
 use ratatui::widgets::{Block, BorderType};
 use ratatui::Frame;
+use std::io::Result;
 
-enum focused_block{
+pub enum focused_block{
     Playlist,
     TrackList,
-    Progress_bar
+    Music
 }
 
-enum menu_state {
+pub enum menu_state {
     Playlist,
     Tracklist
 }
 
-pub fn start_tui(){
+pub struct app {
+    pub playlists: Option<Vec<String>>,
+    pub tracklist: Option<Vec<crate::playlists::song>>,
+    pub focused: focused_block,
+    pub state: menu_state,
+}
+
+pub fn start_tui(app: app) -> Result<()>{
     ratatui::run(|terminal| loop {
-        terminal.draw(render);
-        if event::read().unwrap().is_key_press() {
-            break;
+
+        terminal.draw(|frame| app::render(frame));
+
+        if let Some(key) = event::read()?.as_key_press_event() {
+            match app.focused {
+                 focused_block::Music => match key.code {
+
+                    KeyCode::Char('q') => {return Ok(())}
+                    _ => {}
+
+            }
+            _ => {}
+            }
+
         }
-    });
+    })
 }
 
-fn render(frame: &mut Frame) {
-    let vertical = Layout::vertical([Constraint::Length(1), Constraint::Fill(1)]).spacing(1);
-    let horizontal = Layout::horizontal([Constraint::Percentage(33); 3]).spacing(1);
-    let [top, main] = frame.area().layout(&vertical);
-    let [left, middle, right] = main.layout(&horizontal);
+impl app{
+    fn render(frame: &mut Frame) {
+        let vertical = Layout::vertical([Constraint::Percentage(80), Constraint::Percentage(20)]);
+        let [top, bottom] = frame.area().layout(&vertical);
 
-    let title = Line::from_iter([
-        Span::from("Block Widget").bold(),
-                                Span::from(" (Press 'q' to quit)"),
-    ]);
-    frame.render_widget(title.centered(), top);
+        Self::render_track_list_block(frame, top);
+        // Self::render_playlist_block(frame, top);
+        Self::render_music_progress_bar_block(frame, bottom);
+    }
 
-    render_track_list_block(frame, left);
-    render_playlist_block(frame, middle);
-    render_music_progress_bar_block(frame, right);
-}
+    fn render_track_list_block(frame: &mut Frame, area: Rect) {
+        let block = Block::bordered()
+        .border_type(BorderType::Rounded)
+        .title("TrackList");
+        frame.render_widget(block, area);
+    }
 
-pub fn render_track_list_block(frame: &mut Frame, area: Rect) {
-    let block = Block::bordered().title("Bordered block");
-    frame.render_widget(block, area);
-}
+    fn render_playlist_block(frame: &mut Frame, area: Rect) {
+        let block = Block::bordered()
+        .border_type(BorderType::Rounded)
+        .title("Playlists");
+        frame.render_widget(block, area);
+    }
 
-pub fn render_playlist_block(frame: &mut Frame, area: Rect) {
-    let block = Block::bordered()
-    .style(Style::new().blue().on_black().bold().italic())
-    .title("Styled block");
-    frame.render_widget(block, area);
-}
+    fn render_music_progress_bar_block(frame: &mut Frame, area: Rect) {
+        let block = Block::bordered()
+        .border_type(BorderType::Rounded)
+        .border_style(Style::new().magenta())
+        .title("Music");
+        frame.render_widget(block, area);
+    }
 
-pub fn render_music_progress_bar_block(frame: &mut Frame, area: Rect) {
-    let block = Block::bordered()
-    .border_type(BorderType::Rounded)
-    .border_style(Style::new().red())
-    .title("Custom borders");
-    frame.render_widget(block, area);
 }
