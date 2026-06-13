@@ -10,7 +10,7 @@ fn main() {
         playlists: None,
         tracklist: None,
         focused: tui::focused_block::Music,
-        state: tui::menu_state::Tracklist,
+        state: tui::menu_state::Playlist,
     };
-    tui::start_tui(app);
+    tui::start_tui(&mut app);
 }

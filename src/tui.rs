@@ -23,7 +23,7 @@ pub struct app {
     pub state: menu_state,
 }
 
-pub fn start_tui(app: app) -> Result<()>{
+pub fn start_tui(app: &mut app) -> Result<()>{
     ratatui::run(|terminal| loop {
         terminal.draw(|frame| app::render(&app,frame));
 
@@ -31,7 +31,13 @@ pub fn start_tui(app: app) -> Result<()>{
             match app.focused {
                  focused_block::Music => match key.code {
 
-                    KeyCode::Char('q') => {return Ok(())}
+                    KeyCode::Esc | KeyCode::End => {return Ok(())}
+                    KeyCode::Char('e') => {
+                        match app.state {
+                                menu_state::Playlist => {app.state = menu_state::Tracklist}
+                                menu_state::Tracklist => {app.state = menu_state::Playlist}
+                                _ => {}
+                        }}
                     _ => {}
 
             }
