@@ -25,8 +25,7 @@ pub struct app {
 
 pub fn start_tui(app: app) -> Result<()>{
     ratatui::run(|terminal| loop {
-
-        terminal.draw(|frame| app::render(frame));
+        terminal.draw(|frame| app::render(&app,frame));
 
         if let Some(key) = event::read()?.as_key_press_event() {
             match app.focused {
@@ -44,12 +43,15 @@ pub fn start_tui(app: app) -> Result<()>{
 }
 
 impl app{
-    fn render(frame: &mut Frame) {
+    fn render(&self,frame: &mut Frame) {
         let vertical = Layout::vertical([Constraint::Percentage(80), Constraint::Percentage(20)]);
         let [top, bottom] = frame.area().layout(&vertical);
 
-        Self::render_track_list_block(frame, top);
-        // Self::render_playlist_block(frame, top);
+        match self.state {
+            menu_state::Playlist => {Self::render_playlist_block(frame,top);}
+            menu_state::Tracklist => {Self::render_track_list_block(frame,top);}
+            _ => {}
+        }
         Self::render_music_progress_bar_block(frame, bottom);
     }
 
