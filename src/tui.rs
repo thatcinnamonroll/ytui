@@ -4,12 +4,16 @@ use ratatui::style::{Style, Modifier};
 use ratatui::widgets::{Block, BorderType, List, ListState};
 use ratatui::Frame;
 use std::io::Result;
+use crate::tui_helper;
 
+#[derive(PartialEq)]
 pub enum focused_block{
-    TopBlock,
+    TrackList,
+    Playlist,
     Music
 }
 
+#[derive(PartialEq)]
 pub enum menu_state {
     Playlist,
     Tracklist
@@ -17,8 +21,9 @@ pub enum menu_state {
 
 pub struct app {
     pub playlists: Option<Vec<String>>,
+    pub playlist_state: ListState,
     pub tracklist: Option<Vec<crate::playlists::song>>,
-    pub list_state: ListState,
+    pub tracklist_state: ListState,
     pub focused: focused_block,
     pub state: menu_state,
 }
@@ -26,29 +31,36 @@ pub struct app {
 pub fn start_tui(app: &mut app) -> Result<()>{
     ratatui::run(|terminal| loop {
         terminal.draw(|frame| app::render(app,frame));
-
+        // keyboard input parser
         if let Some(key) = event::read()?.as_key_press_event() {
-            match key.code {
-                KeyCode::Esc | KeyCode::End => {return Ok(())}
-                KeyCode::Char('e') => {
-                    match app.state {
-                        menu_state::Playlist => {app.state = menu_state::Tracklist}
-                        menu_state::Tracklist => {app.state = menu_state::Playlist}
-                        _ => {}
-                    }}
-                KeyCode::Char('q') => {
-                    match app.focused {
-                        focused_block::Music => {app.focused = focused_block::TopBlock}
-                        focused_block::TopBlock => {app.focused = focused_block::Music}
-                        _ => {}
-                    }
+            if app.focused == focused_block::TrackList{
+                match key.code {
+                    KeyCode::Esc | KeyCode::End => {return Ok(())}
+                    KeyCode::Char('e') => {tui_helper::switch_state(app);}
+                    KeyCode::Char('q') => {tui_helper::switch_focus(app);}
+                    KeyCode::Char('w') | KeyCode::Up => {app.tracklist_state.select_previous();}
+                    KeyCode::Char('s') | KeyCode::Down => {app.tracklist_state.select_next();}
+                    _ => {}
+
                 }
-                KeyCode::Char('w') | KeyCode::Up => {app.list_state.select_previous();}
-                KeyCode::Char('s') | KeyCode::Down => {app.list_state.select_next();}
-                _ => {}
+            }else if  app.focused == focused_block::Playlist {
+                match key.code {
+                    KeyCode::Esc | KeyCode::End => {return Ok(())}
+                    KeyCode::Char('e') => {tui_helper::switch_state(app);}
+                    KeyCode::Char('q') => {tui_helper::switch_focus(app);}
+                    KeyCode::Char('w') | KeyCode::Up => {app.playlist_state.select_previous();}
+                    KeyCode::Char('s') | KeyCode::Down => {app.playlist_state.select_next();}
+                    _ => {}
+                }
+            }else {
+                match key.code {
+                    KeyCode::Esc | KeyCode::End => {return Ok(())}
+                    KeyCode::Char('e') => {tui_helper::switch_state(app);}
+                    KeyCode::Char('q') => {tui_helper::switch_focus(app);}
+                    _ => {}
 
+                }
             }
-
         }
     })
 }
@@ -62,13 +74,13 @@ impl app{
         let mut music_block_style = Style::new();
 
         match self.focused {
-            focused_block::TopBlock => {top_block_style = Style::new().magenta();}
+            focused_block::Playlist | focused_block::TrackList => {top_block_style = Style::new().magenta();}
             focused_block::Music => {music_block_style = Style::new().magenta();}
         }
 
         match self.state {
-            menu_state::Playlist => {Self::render_playlist_block(frame,top,top_block_style,&mut self.list_state);}
-            menu_state::Tracklist => {Self::render_track_list_block(frame,top,top_block_style, &mut self.list_state);}
+            menu_state::Playlist => {Self::render_playlist_block(frame,top,top_block_style,&mut self.playlist_state);}
+            menu_state::Tracklist => {Self::render_track_list_block(frame,top,top_block_style, &mut self.tracklist_state);}
             _ => {}
         }
         Self::render_music_progress_bar_block(frame, bottom,music_block_style);
