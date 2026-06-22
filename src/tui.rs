@@ -1,7 +1,7 @@
 use crossterm::event::{self, KeyCode};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Style, Modifier};
-use ratatui::widgets::{Block, BorderType, List, ListState};
+use ratatui::style::{Style, Modifier, Color};
+use ratatui::widgets::{Block, BorderType, List, ListState, LineGauge, Paragraph};
 use ratatui::Frame;
 use std::io::Result;
 use crate::tui_helper;
@@ -119,7 +119,28 @@ impl app{
         .border_type(BorderType::Rounded)
         .border_style(block_style)
         .title("Music");
-        frame.render_widget(block, area);
+
+        frame.render_widget(block,area);
+
+        let chunks = Layout::vertical([
+            Constraint::Length(2),
+            Constraint::Length(3),
+            Constraint::Length(2),
+        ])
+        .margin(1)
+        .split(area);
+
+        let progress_bar = LineGauge::default()
+            .ratio(0.2)
+            .filled_style(Color::Magenta);
+
+        let music_title_label = Paragraph::new("Some cool song");
+
+        let music_artist_label = Paragraph::new("Very good artist");
+
+        frame.render_widget(music_title_label,chunks[0]);
+        frame.render_widget(music_artist_label,chunks[1]);
+        frame.render_widget(progress_bar,chunks[2]);
     }
 
 }
