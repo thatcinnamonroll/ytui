@@ -15,7 +15,7 @@ fn main() {
         playlist_state: list_state1,
         tracklist: None,
         tracklist_state: list_state2,
-        focused: tui::focused_block::Music,
+        focused: tui::focused_block::Playlist,
         state: tui::menu_state::Playlist,
     };
     tui::start_tui(&mut app);
