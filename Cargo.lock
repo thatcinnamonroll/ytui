@@ -2119,6 +2119,7 @@ dependencies = [
  "crossterm",
  "gstreamer",
  "ratatui",
+ "serde_json",
 ]
 
 [[package]]
