@@ -13,12 +13,18 @@ pub struct playlist_helper{
 }
 
 impl playlist_helper{
-    pub fn list_playlist(self){
+    pub fn list_playlist(self) -> Vec<String>{
+        let mut playlists : Vec<String> = vec![];
         let files = read_dir(self.playlists_path).unwrap();
 
-        for file in files {
-            println!("Name: {}", file.unwrap().path().display());
+        for mut file in files {
+            let mut string_file_name = file.as_mut().unwrap().file_name().display().to_string();
+            if !string_file_name.ends_with(".json"){
+                continue;
+            }
+            playlists.push(string_file_name.trim_end_matches(".json").clone().to_string());
         }
+        return playlists;
     }
 
 }
