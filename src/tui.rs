@@ -4,7 +4,7 @@ use ratatui::style::{Style, Modifier, Color};
 use ratatui::widgets::{Block, BorderType, List, ListState, Gauge, Paragraph};
 use ratatui::Frame;
 use std::io::Result;
-use crate::tui_helper;
+use crate::{playlists, tui_helper};
 
 #[derive(PartialEq)]
 pub enum focused_block{
@@ -19,7 +19,7 @@ pub enum menu_state {
 }
 
 pub struct app {
-    pub playlists: Option<Vec<String>>,
+    pub playlists: playlists::playlist_helper,
     pub playlist_state: ListState,
     pub tracklist: Option<Vec<crate::playlists::song>>,
     pub tracklist_state: ListState,
@@ -59,7 +59,7 @@ impl app{
         let [top, bottom] = frame.area().layout(&vertical);
 
         match self.state {
-            menu_state::Playlist => {Self::render_playlist_block(frame,bottom,&mut self.playlist_state);}
+            menu_state::Playlist => {Self::render_playlist_block(frame,bottom,&mut self.playlist_state, &mut self.playlists);}
             menu_state::Tracklist => {Self::render_track_list_block(frame,bottom, &mut self.tracklist_state);}
             _ => {}
         }
@@ -80,13 +80,14 @@ impl app{
         frame.render_stateful_widget(list, area, list_state);
     }
 
-    fn render_playlist_block(frame: &mut Frame, area: Rect, list_state: &mut ListState) {
+    fn render_playlist_block(frame: &mut Frame, area: Rect, list_state: &mut ListState, playlist_helper: &mut playlists::playlist_helper) {
         let block = Block::bordered()
         .border_type(BorderType::Rounded)
         .border_style(Style::new().magenta())
         .title("Playlists");
 
-        let playlists = ["playlist1","playlist2"];
+        let playlists = playlist_helper.list_playlist();
+
         let list = List::new(playlists)
         .highlight_style(Modifier::REVERSED)
         .block(block);
