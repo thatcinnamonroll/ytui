@@ -21,14 +21,15 @@ fn main() {
     let mut list_state1 = ListState::default().with_selected(Some(0));
     let mut list_state2 = ListState::default().with_selected(Some(0));
 
-    let mut app = tui::app{
-        playlists: playlists,
-        playlist_state: list_state1,
-        tracklist: None,
-        tracklist_state: list_state2,
-        focused: tui::focused_block::Playlist,
-        state: tui::menu_state::Playlist,
-    };
-    tui::start_tui(&mut app);
+    // let mut app = tui::app{
+    //     playlists: playlists,
+    //     playlist_state: list_state1,
+    //     tracklist: None,
+    //     tracklist_state: list_state2,
+    //     focused: tui::focused_block::Playlist,
+    //     state: tui::menu_state::Playlist,
+    // };
+    // tui::start_tui(&mut app);
 
+    playlists::playlist_helper::read_playlist(&playlists,"playlista_numer1".to_string());
 }
