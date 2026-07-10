@@ -1,4 +1,5 @@
 use crate::tui::{focused_block, menu_state, app};
+use crate::playlists::playlist_helper;
 
 pub fn switch_state(app: &mut app) {
     match app.state {
@@ -17,3 +18,13 @@ pub fn switch_state(app: &mut app) {
         }
     }
 }
+
+pub fn refresh_playlists(app: &mut app){
+    let playlists = app.playlist_man.list_playlist();
+    app.playlists = playlists;
+}
+
+// pub fn open_playlist(app: &mut app) {
+//     let index_of_selected_playlist = app.playlist_state.selected().unwrap();
+//     let selected_playlist = app.playlists.;
+// }
