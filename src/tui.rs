@@ -7,12 +7,6 @@ use std::io::Result;
 use crate::{playlists, tui_helper};
 
 #[derive(PartialEq)]
-pub enum focused_block{
-    TrackList,
-    Playlist
-}
-
-#[derive(PartialEq)]
 pub enum menu_state {
     Playlist,
     Tracklist
@@ -24,7 +18,6 @@ pub struct app {
     pub playlist_state: ListState,
     pub tracklist: Vec<crate::playlists::song>,
     pub tracklist_state: ListState,
-    pub focused: focused_block,
     pub state: menu_state,
 }
 
@@ -33,7 +26,7 @@ pub fn start_tui(app: &mut app) -> Result<()>{
         terminal.draw(|frame| app::render(app,frame));
         // keyboard input parser
         if let Some(key) = event::read()?.as_key_press_event() {
-            if app.focused == focused_block::TrackList{
+            if app.state == menu_state::Tracklist{
                 match key.code {
                     KeyCode::Esc | KeyCode::End => {return Ok(())}
                     KeyCode::Char('e') => {tui_helper::switch_state(app);}
