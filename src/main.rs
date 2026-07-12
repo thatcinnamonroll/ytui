@@ -18,7 +18,14 @@ fn main() {
         playlists_path: home_dir
     };
 
-    let playlists = vec![];
+    let placeholder_song = playlists::song{
+        id: "Some id".to_string(),
+        name: "No playlist open!".to_string(),
+        author: "Song Author".to_string()
+    };
+
+    let playlists = playlists_man.list_playlist();
+    let tracklist = vec![placeholder_song];
 
     let mut list_state1 = ListState::default().with_selected(Some(0));
     let mut list_state2 = ListState::default().with_selected(Some(0));
@@ -27,7 +34,7 @@ fn main() {
         playlists: playlists,
         playlist_man: playlists_man,
         playlist_state: list_state1,
-        tracklist: None,
+        tracklist: tracklist,
         tracklist_state: list_state2,
         focused: tui::focused_block::Playlist,
         state: tui::menu_state::Playlist,

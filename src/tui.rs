@@ -22,7 +22,7 @@ pub struct app {
     pub playlists: Vec<String>,
     pub playlist_man: playlists::playlist_helper,
     pub playlist_state: ListState,
-    pub tracklist: Option<Vec<crate::playlists::song>>,
+    pub tracklist: Vec<crate::playlists::song>,
     pub tracklist_state: ListState,
     pub focused: focused_block,
     pub state: menu_state,
@@ -47,7 +47,7 @@ pub fn start_tui(app: &mut app) -> Result<()>{
                     KeyCode::Char('e') => {tui_helper::switch_state(app);}
                     KeyCode::Char('w') | KeyCode::Up => {app.playlist_state.select_previous();}
                     KeyCode::Char('s') | KeyCode::Down => {app.playlist_state.select_next();}
-                    // KeyCode::Enter => {tui_helper::open_playlist(app);}
+                    KeyCode::Enter => {tui_helper::open_playlist(app);}
                     _ => {}
                 }
             }
@@ -62,24 +62,29 @@ impl app{
 
         match self.state {
             menu_state::Playlist => {Self::render_playlist_block(frame,bottom,self);}
-            menu_state::Tracklist => {Self::render_track_list_block(frame,bottom, &mut self.tracklist_state);}
+            menu_state::Tracklist => {Self::render_track_list_block(frame,bottom,self);}
             _ => {}
         }
         Self::render_music_progress_bar_block(frame, top);
     }
 
-    fn render_track_list_block(frame: &mut Frame, area: Rect, list_state: &mut ListState) {
+    fn render_track_list_block(frame: &mut Frame, area: Rect, app: &mut app) {
         let block = Block::bordered()
         .border_type(BorderType::Rounded)
         .border_style(Style::new().magenta())
         .title("TrackList");
 
-        let tracklist = ["song1","song2"];
+        let mut tracklist = vec![];
+
+        for song in &app.tracklist {
+            tracklist.push(song.name.clone());
+        }
+
         let list = List::new(tracklist)
         .highlight_style(Modifier::REVERSED)
         .block(block);
 
-        frame.render_stateful_widget(list, area, list_state);
+        frame.render_stateful_widget(list, area, &mut app.tracklist_state);
     }
 
     fn render_playlist_block(frame: &mut Frame, area: Rect, app: &mut app) {

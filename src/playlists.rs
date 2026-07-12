@@ -3,7 +3,7 @@ use std::fs::{read_to_string, read_dir};
 use serde_json::{json, Value};
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct song{
     pub id:String,
     pub name: String,
@@ -37,7 +37,6 @@ impl playlist_helper{
         let raw_playlist_data_str = raw_playlist_data.as_str();
 
         let mut playlist = vec![];
-
         let playlist_data: Vec<song> = serde_json::from_str(raw_playlist_data_str).unwrap();
         for music in playlist_data{
             playlist.push(music);

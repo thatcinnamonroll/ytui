@@ -24,7 +24,11 @@ pub fn refresh_playlists(app: &mut app){
     app.playlists = playlists;
 }
 
-// pub fn open_playlist(app: &mut app) {
-//     let index_of_selected_playlist = app.playlist_state.selected().unwrap();
-//     let selected_playlist = app.playlists.;
-// }
+pub fn open_playlist(app: &mut app) {
+    let index_of_selected_playlist = app.playlist_state.selected().unwrap();
+    let selected_playlist = &app.playlists[index_of_selected_playlist];
+
+    let opened_playlist = app.playlist_man.read_playlist(selected_playlist.to_string());
+    app.tracklist = opened_playlist.to_vec();
+    switch_state(app);
+}
