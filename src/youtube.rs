@@ -1,13 +1,13 @@
 use std::process::Command;
 
-pub struct ytdownload {
+pub struct YtMan {
     pub ytdlp_bin_path: String,
     pub cache_dir: String,
 }
 
-impl ytdownload {
+impl YtMan {
     pub fn download(&self,vid_url : &str){
-        let response = Command::new(&self.ytdlp_bin_path)
+        let _response = Command::new(&self.ytdlp_bin_path)
                         .args(["-x","--audio-format","opus","-P",&self.cache_dir.clone(),"-o","%(id)s",vid_url.clone()])
                         .output()
                         .expect("failed to run yt-dlp");

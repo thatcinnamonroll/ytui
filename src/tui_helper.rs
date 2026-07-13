@@ -1,19 +1,18 @@
-use crate::tui::{menu_state, app};
-use crate::playlists::playlist_helper;
+use crate::tui::{MenuState, App};
 
-pub fn switch_state(app: &mut app) {
+pub fn switch_state(app: &mut App) {
     match app.state {
-        menu_state::Playlist => {app.state = menu_state::Tracklist;}
-        menu_state::Tracklist => {app.state = menu_state::Playlist;}
+        MenuState::Playlist => {app.state = MenuState::Tracklist;}
+        MenuState::Tracklist => {app.state = MenuState::Playlist;}
     }
 }
 
-pub fn refresh_playlists(app: &mut app){
+pub fn refresh_playlists(app: &mut App){
     let playlists = app.playlist_man.list_playlist();
     app.playlists = playlists;
 }
 
-pub fn open_playlist(app: &mut app) {
+pub fn open_playlist(app: &mut App) {
     let index_of_selected_playlist = app.playlist_state.selected().unwrap();
     let selected_playlist = &app.playlists[index_of_selected_playlist];
 

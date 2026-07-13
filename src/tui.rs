@@ -1,32 +1,32 @@
 use crossterm::event::{self, KeyCode};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Style, Modifier, Color};
+use ratatui::style::{Style, Modifier};
 use ratatui::widgets::{Block, BorderType, List, ListState, Gauge, Paragraph};
 use ratatui::Frame;
 use std::io::Result;
 use crate::{playlists, tui_helper};
 
 #[derive(PartialEq)]
-pub enum menu_state {
+pub enum MenuState {
     Playlist,
     Tracklist
 }
 
-pub struct app {
+pub struct App {
     pub playlists: Vec<String>,
-    pub playlist_man: playlists::playlist_helper,
+    pub playlist_man: playlists::PlaylistHelper,
     pub playlist_state: ListState,
-    pub tracklist: Vec<crate::playlists::song>,
+    pub tracklist: Vec<crate::playlists::Song>,
     pub tracklist_state: ListState,
-    pub state: menu_state,
+    pub state: MenuState,
 }
 
-pub fn start_tui(app: &mut app) -> Result<()>{
+pub fn start_tui(app: &mut App) -> Result<()>{
     ratatui::run(|terminal| loop {
-        terminal.draw(|frame| app::render(app,frame));
+        let _ = terminal.draw(|frame| App::render(app,frame));
         // keyboard input parser
         if let Some(key) = event::read()?.as_key_press_event() {
-            if app.state == menu_state::Tracklist{
+            if app.state == MenuState::Tracklist{
                 match key.code {
                     KeyCode::Esc | KeyCode::End => {return Ok(())}
                     KeyCode::Char('e') => {tui_helper::switch_state(app);}
@@ -48,20 +48,19 @@ pub fn start_tui(app: &mut app) -> Result<()>{
     })
 }
 
-impl app{
+impl App{
     fn render(&mut self,frame: &mut Frame) {
         let vertical = Layout::vertical([Constraint::Percentage(20),Constraint::Percentage(80)]);
         let [top, bottom] = frame.area().layout(&vertical);
 
         match self.state {
-            menu_state::Playlist => {Self::render_playlist_block(frame,bottom,self);}
-            menu_state::Tracklist => {Self::render_track_list_block(frame,bottom,self);}
-            _ => {}
+            MenuState::Playlist => {Self::render_playlist_block(frame,bottom,self);}
+            MenuState::Tracklist => {Self::render_track_list_block(frame,bottom,self);}
         }
         Self::render_music_progress_bar_block(frame, top);
     }
 
-    fn render_track_list_block(frame: &mut Frame, area: Rect, app: &mut app) {
+    fn render_track_list_block(frame: &mut Frame, area: Rect, app: &mut App) {
         let block = Block::bordered()
         .border_type(BorderType::Rounded)
         .border_style(Style::new().magenta())
@@ -80,7 +79,7 @@ impl app{
         frame.render_stateful_widget(list, area, &mut app.tracklist_state);
     }
 
-    fn render_playlist_block(frame: &mut Frame, area: Rect, app: &mut app) {
+    fn render_playlist_block(frame: &mut Frame, area: Rect, app: &mut App) {
         let block = Block::bordered()
         .border_type(BorderType::Rounded)
         .border_style(Style::new().magenta())
