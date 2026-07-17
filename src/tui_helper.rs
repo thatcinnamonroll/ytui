@@ -28,3 +28,12 @@ pub fn open_playlist(app: &mut App) {
 
     switch_state(app);
 }
+
+pub fn open_song(app: &mut App){
+    let index_of_song = app.tracklist_state.selected().unwrap();
+    let selected_song = &app.tracklist[index_of_song];
+
+    if !app.yt.ensure_downloaded(selected_song.id.clone()) {
+        app.yt.download(&selected_song.id);
+    }
+}

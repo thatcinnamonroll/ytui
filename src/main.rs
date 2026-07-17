@@ -11,14 +11,18 @@ pub mod tui_helper;
 
 fn main() {
     // TODO add error handeling
-    let mut home_dir = env::home_dir().unwrap();
-    home_dir.push(".local/share/ytui");
+    let home_dir = env::home_dir().unwrap();
     let playlists_man = PlaylistHelper{
-        playlists_path: home_dir
+        playlists_path: home_dir.join(".local/share/ytui")
+    };
+
+    let yt_man = crate::youtube::YtMan{
+        ytdlp_bin_path: "/bin/yt-dlp".to_string(),
+        cache_dir: home_dir.join(".cache/ytui").to_string_lossy().to_string()
     };
 
     let placeholder_song = playlists::Song{
-        id: "Some id".to_string(),
+        id: "YTUI-TEST-ID".to_string(),
         name: "No playlist open!".to_string(),
         author: "Song Author".to_string()
     };
@@ -38,6 +42,7 @@ fn main() {
         tracklist_state: list_state2,
         tracklist_only_name:tracklist_only_name,
         state: tui::MenuState::Playlist,
+        yt: yt_man
     };
     let _ = tui::start_tui(&mut app);
 }
