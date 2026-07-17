@@ -25,6 +25,7 @@ fn main() {
 
     let playlists = playlists_man.list_playlist();
     let tracklist = vec![placeholder_song];
+    let tracklist_only_name = vec![];
 
     let list_state1 = ListState::default().with_selected(Some(0));
     let list_state2 = ListState::default().with_selected(Some(0));
@@ -35,6 +36,7 @@ fn main() {
         playlist_state: list_state1,
         tracklist: tracklist,
         tracklist_state: list_state2,
+        tracklist_only_name:tracklist_only_name,
         state: tui::MenuState::Playlist,
     };
     let _ = tui::start_tui(&mut app);

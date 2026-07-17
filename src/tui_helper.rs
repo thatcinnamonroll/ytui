@@ -18,5 +18,13 @@ pub fn open_playlist(app: &mut App) {
 
     let opened_playlist = app.playlist_man.read_playlist(selected_playlist.to_string());
     app.tracklist = opened_playlist.to_vec();
+
+    let mut tracklist_only_name = vec![];
+
+    for song in &app.tracklist {
+        tracklist_only_name.push(song.name.clone());
+    }
+    app.tracklist_only_name = tracklist_only_name;
+
     switch_state(app);
 }

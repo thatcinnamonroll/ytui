@@ -18,6 +18,7 @@ pub struct App {
     pub playlist_state: ListState,
     pub tracklist: Vec<crate::playlists::Song>,
     pub tracklist_state: ListState,
+    pub tracklist_only_name: Vec<String>,
     pub state: MenuState,
 }
 
@@ -66,13 +67,7 @@ impl App{
         .border_style(Style::new().magenta())
         .title("TrackList");
 
-        let mut tracklist = vec![];
-
-        for song in &app.tracklist {
-            tracklist.push(song.name.clone());
-        }
-
-        let list = List::new(tracklist)
+        let list = List::new(app.tracklist_only_name.clone())
         .highlight_style(Modifier::REVERSED)
         .block(block);
 
