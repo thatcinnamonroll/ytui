@@ -36,4 +36,5 @@ pub fn open_song(app: &mut App){
     if !app.yt.ensure_downloaded(selected_song.id.clone()) {
         app.yt.download(&selected_song.id);
     }
+    app.player.play_file(&selected_song.id);
 }

@@ -4,7 +4,7 @@ use ratatui::style::{Style, Modifier};
 use ratatui::widgets::{Block, BorderType, List, ListState, Gauge, Paragraph};
 use ratatui::Frame;
 use std::io::Result;
-use crate::{playlists, tui_helper, youtube};
+use crate::{playlists, tui_helper, youtube, player};
 
 #[derive(PartialEq)]
 pub enum MenuState {
@@ -20,7 +20,8 @@ pub struct App {
     pub tracklist_state: ListState,
     pub tracklist_only_name: Vec<String>,
     pub state: MenuState,
-    pub yt: youtube::YtMan
+    pub yt: youtube::YtMan,
+    pub player: player::MusicPlayer
 }
 
 pub fn start_tui(app: &mut App) -> Result<()>{
